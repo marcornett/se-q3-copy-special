@@ -24,10 +24,11 @@ def get_special_paths(dirname):
     special_pattern = re.compile(r'__(\w+)__')
 
     special_list = []
-
     for f in file_list:
-        if special_pattern.findall(f):
-            special_list.append(os.path.abspath(f))
+        if special_pattern.search(f):
+            full_path = os.path.abspath(os.path.join(dirname, f))
+            special_list.append(full_path)
+            # special_list.append(os.path.abspath(f))
     return special_list
 
 
@@ -45,12 +46,17 @@ def zip_to(path_list, dest_zip):
     """Creates zip folder including files from path list"""
     # try:
     print(f"Command I'm going to do: \nzip -j {dest_zip}")
-    for f_path in path_list:
-        f = os.path.basename(f_path)
-        subprocess.run(
-            f'zip -j {dest_zip} {f}',
-            shell=True
-        )
+    command_list = ['zip', '-j', dest_zip]
+    command_list.extend(path_list)
+    subprocess.run(
+        command_list,
+    )
+    # for f_path in path_list:
+    #     result = subprocess.run(
+    #         f'zip -j {dest_zip} {f_path}',
+    #         shell=True,
+    #         capture_output=True,
+    #     )
     # except subprocess.CalledProcessError:
     #     subprocess.check_output(
     #         "identifier",
@@ -67,7 +73,7 @@ def main(args):
     parser.add_argument('--todir', help='dest dir for special files')
     parser.add_argument('--tozip', help='dest zipfile for special files')
     parser.add_argument(
-        'from_dir', help="Shows absolute path of directories?", nargs='+')
+        'from_dir', help="Shows absolute path of special files", nargs='+')
     # TODO: add one more argument definition to parse the 'from_dir' argument
     ns = parser.parse_args(args)
     # TODO: you must write your own code to get the command line args.
