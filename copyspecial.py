@@ -7,7 +7,7 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 
 # give credits
-__author__ = "marcornett"
+__author__ = "marcornett, help from Piero"
 
 import re
 import os
