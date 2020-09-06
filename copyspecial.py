@@ -21,7 +21,7 @@ def get_special_paths(dirname):
     """Given a dirname, returns a list of all its special files."""
     file_list = os.listdir(dirname)
 
-    special_pattern = re.compile(r'(__\w+__.\w+)')
+    special_pattern = re.compile(r'__(\w+)__')
 
     special_list = []
 
@@ -43,16 +43,21 @@ def copy_to(path_list, dest_dir):
 
 def zip_to(path_list, dest_zip):
     """Creates zip folder including files from path list"""
-    basename_pattern = re.compile(r'(\w+).\w+')
-    for path in path_list:
-        file_name = basename_pattern.findall(os.path.basename(path))[0]
-        basename = os.path.basename(path)
+    # try:
+    print(f"Command I'm going to do: \nzip -j {dest_zip}")
+    for f_path in path_list:
+        f = os.path.basename(f_path)
         subprocess.run(
-            f'zip -j {file_name}_zipfile {basename}',
-            shell=True,
-            capture_output=True)
-
-    return f"Command I'm going to do: \nzip -j {dest_zip}"
+            f'zip -j {dest_zip} {f}',
+            shell=True
+        )
+    # except subprocess.CalledProcessError:
+    #     subprocess.check_output(
+    #         "identifier",
+    #         stderr=subprocess.STDOUT
+    #     )
+    #     print('???')
+    #     print(subprocess.CalledProcessError)
 
 
 def main(args):
@@ -84,11 +89,12 @@ def main(args):
     for directory in directory_list:
         paths_list = get_special_paths(directory)
         if tozip:
-            print(zip_to(paths_list, tozip))
+            zip_to(paths_list, tozip)
         elif todir:
-            print(copy_to(paths_list, todir))
-        for path in paths_list:
-            print(path)
+            copy_to(paths_list, todir)
+        else:
+            for path in paths_list:
+                print(path)
 
 
 if __name__ == "__main__":
